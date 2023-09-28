@@ -2,6 +2,7 @@ package web
 
 import (
     "fmt"
+    "net/http"
     "os"
     "path/filepath"
     "runtime"
@@ -27,6 +28,14 @@ func Service() *gin.Engine {
     router.Static("/static", staticPath)
 
     router.LoadHTMLGlob(htmlPath)
+
+    // 全部導到 /
+    redirectToRoot := func(c *gin.Context) {
+        if c.Request.URL.Path != "/" {
+            c.Redirect(http.StatusMovedPermanently, "/")
+        }
+    }
+    router.Use(redirectToRoot)
 
     return router
 }
